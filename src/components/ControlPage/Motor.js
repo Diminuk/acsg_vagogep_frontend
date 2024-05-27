@@ -1,13 +1,17 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { TextField, Typography, Grid, Button } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
+import { updateSingleModeSpd, updateSingleModeAcc, updateSingleModeDec } from '../../store/actions/statusLedActions';
+import { grey } from '@mui/material/colors';
 
 
 const Servo = () => {
+
+    const dispatch = useDispatch();
 
     const singleModeStatus = useSelector(state => state.statusled.singleModeStatus);
     const isProcessStarted = useSelector(state => state.statusled.processStatus['IsProcessStarted']);
@@ -15,8 +19,9 @@ const Servo = () => {
 
     const handleChangeSpeed = (event) => {
         const newValue = event.target.value;
+        dispatch(updateSingleModeSpd({ single_speed: newValue }));
 
-        fetch('http://localhost:8000/api/update/single', {
+        /*fetch('http://localhost:8000/api/update/single', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -27,6 +32,7 @@ const Servo = () => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                dispatch(updateSingleModeSpd({ single_speed: newValue }));
                 return response.json();
             })
             .then(data => {
@@ -36,12 +42,13 @@ const Servo = () => {
             .catch(error => {
                 // Handle error
                 console.error('Error posting value:', error);
-            });
+            });*/
     };
     const handleChangeAcceleration = (event) => {
         const newValue = event.target.value;
+        dispatch(updateSingleModeAcc({ single_acceleration: newValue }));
 
-        fetch('http://localhost:8000/api/update/single', {
+        /*fetch('http://localhost:8000/api/update/single', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -52,6 +59,7 @@ const Servo = () => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                dispatch(updateSingleModeAcc({ single_acceleration: newValue }));
                 return response.json();
             })
             .then(data => {
@@ -61,12 +69,13 @@ const Servo = () => {
             .catch(error => {
                 // Handle error
                 console.error('Error posting value:', error);
-            });
+            });*/
     };
     const handleChangeDeceleration = (event) => {
         const newValue = event.target.value;
+        dispatch(updateSingleModeDec({ single_deceleration: newValue }));
 
-        fetch('http://localhost:8000/api/update/single', {
+        /*fetch('http://localhost:8000/api/update/single', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -77,6 +86,7 @@ const Servo = () => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                dispatch(updateSingleModeDec({ single_deceleration: newValue }));
                 return response.json();
             })
             .then(data => {
@@ -86,14 +96,14 @@ const Servo = () => {
             .catch(error => {
                 // Handle error
                 console.error('Error posting value:', error);
-            });
+            });*/
     };
 
     return (
         <Paper elevation={8}
             square={false}
             sx={{
-                background: "lightblue",
+                background: grey[200],
                 width: 400,
                 height: 100,
                 marginLeft: 1,

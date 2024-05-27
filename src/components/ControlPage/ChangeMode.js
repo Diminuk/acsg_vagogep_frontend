@@ -5,6 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Typography } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
+import { updateProcessMode } from '../../store/actions/statusLedActions';
+import { grey, red } from '@mui/material/colors';
 
 const ModeSwitch = styled(Switch)(({ theme }) => ({
     width: 150,
@@ -23,28 +25,28 @@ const ModeSwitch = styled(Switch)(({ theme }) => ({
             '&.Mui-disabled': {
                 '& + .MuiSwitch-track': {
                     opacity: 1,
-                    backgroundColor: "#ffe0b2",
+                    backgroundColor: grey[700],
                 },
             },
             '& + .MuiSwitch-track': {
                 opacity: 1,
-                backgroundColor: "orange",
+                backgroundColor: grey[900],
             },
 
         },
         '&.Mui-disabled': {
             '& + .MuiSwitch-track': {
                 opacity: 1,
-                backgroundColor: "lightblue",
+                backgroundColor: grey[300],
             },
         },
         '& + .MuiSwitch-track': {
             opacity: 1,
-            backgroundColor: "blue",
+            backgroundColor: grey[100],
         },
     },
     '& .MuiSwitch-thumb': {
-        backgroundColor: theme.palette.mode === 'dark' ? '#003892' : '#001e3c',
+        backgroundColor: grey[900],
         width: 36,
         height: 36,
         '&::before': {
@@ -57,11 +59,11 @@ const ModeSwitch = styled(Switch)(({ theme }) => ({
             backgroundRepeat: 'no-repeat',
             backgroundPosition: 'center',
             backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24"><g><path fill="none" d="M0 0h24v24H0z"/><path fill="white" d="M8 20v1.932a.5.5 0 0 1-.82.385l-4.12-3.433A.5.5 0 0 1 3.382 18H18a2 2 0 0 0 2-2V8h2v8a4 4 0 0 1-4 4H8zm8-16V2.068a.5.5 0 0 1 .82-.385l4.12 3.433a.5.5 0 0 1-.321.884H6a2 2 0 0 0-2 2v8H2V8a4 4 0 0 1 4-4h10zm-5 4h2v8h-2v-6H9V9l2-1z"/></g></svg>')`, // Replace with your SVG path
-        },
+        }
     },
     '& .MuiSwitch-track': {
         opacity: 1,
-        backgroundColor: "blue",
+
         borderRadius: 20 / 2,
     },
 }));
@@ -70,11 +72,7 @@ const ChangeMode = () => {
     const dispatch = useDispatch();
     const mode = useSelector(state => state.statusled.processStatus['Mode']);
     const isProcessStarted = useSelector(state => state.statusled.processStatus['IsProcessStarted'])
-    //const handleModeChange = () => {
-    //    // Todo: fetch new mode
-    //    dispatch(toggleMode());
-    //    
-    //};
+
 
     const handleChangeMode = (event) => {
         const newValue = event.target.checked;
@@ -90,6 +88,7 @@ const ChangeMode = () => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                dispatch(updateProcessMode({ mode: newValue }))
                 return response.json();
             })
             .then(data => {
@@ -108,10 +107,10 @@ const ChangeMode = () => {
                 sx={{
                     borderRadius: '16px',
                     padding: '8px',
-                    backgroundColor: mode ? 'lightblue' : 'blue', // Change background color based on mode
+                    backgroundColor: mode ? grey[500] : grey[100], // Change background color based on mode
                 }}
             >
-                <Typography sx={{ color: mode ? 'black' : 'white', fontWeight: 'bold' }}>Single size</Typography>
+                <Typography sx={{ color: mode ? 'black' : 'black', fontWeight: 'bold' }}>Single size</Typography>
             </Box>
             <ModeSwitch
                 disabled={isProcessStarted}
@@ -122,10 +121,10 @@ const ChangeMode = () => {
                 sx={{
                     borderRadius: '16px',
                     padding: '8px',
-                    backgroundColor: mode ? 'orange' : '#ffe0b2', // Change background color based on mode
+                    backgroundColor: mode ? grey[900] : grey[700], // Change background color based on mode
                 }}
             >
-                <Typography sx={{ color: mode ? 'black' : 'black', fontWeight: 'bold' }}>Array size</Typography>
+                <Typography sx={{ color: mode ? 'white' : 'white', fontWeight: 'bold' }}>Array size</Typography>
             </Box>
         </Stack>
     );

@@ -1,16 +1,23 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Slider, TextField, Typography, Grid, Button } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import InputAdornment from '@mui/material/InputAdornment';
+import { updateSingleModeInfdly, updateSingleModeInfp } from '../../store/actions/statusLedActions';
+import KeyboardTextField from '../KeyBoard';
+import { grey, red } from '@mui/material/colors';
 
 const Infra = () => {
+
+    const dispatch = useDispatch();
+    const singleModeStatus = useSelector(state => state.statusled.singleModeStatus);
 
     const isProcessStarted = useSelector(state => state.statusled.processStatus['IsProcessStarted']);
 
     const handleSliderChange = (event, newValue) => {
-        fetch('http://localhost:8000/api/update/single', {
+        dispatch(updateSingleModeInfp({ single_infra_percentage: newValue }));
+        /*fetch('http://localhost:8000/api/update/single', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -21,6 +28,7 @@ const Infra = () => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                dispatch(updateSingleModeInfp({ single_infra_percentage: newValue }));
                 return response.json();
             })
             .then(data => {
@@ -30,7 +38,7 @@ const Infra = () => {
             .catch(error => {
                 // Handle error
                 console.error('Error posting value:', error);
-            });
+            });*/
     };
     const handleInfraDelayChange = (event) => {
         const newValue = event.target.value;
@@ -46,6 +54,7 @@ const Infra = () => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                dispatch(updateSingleModeInfdly({ single_infra_delay: newValue }))
                 return response.json();
             })
             .then(data => {
@@ -58,13 +67,62 @@ const Infra = () => {
             });
     };
 
-    const singleModeStatus = useSelector(state => state.statusled.singleModeStatus);
+    const handleInfraDlyPost = (event) => {
+        if (Number(singleModeStatus['Single_Infra_Delay']) > 0 && String(singleModeStatus['Single_Infra_Delay']).length > 0) {
+            fetch('http://localhost:8000/api/update/single', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ Single_Infra_Delay: singleModeStatus['Single_Infra_Delay'] })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    //dispatch(updateSingleModeInfdly({ single_infra_delay: newValue }))
+                    return response.json();
+                })
+                .then(data => {
+                    // Handle successful response
+                    console.log('Value posted successfully:', singleModeStatus['Single_Infra_Delay']);
+                })
+                .catch(error => {
+                    // Handle error
+                    console.error('Error posting value:', error);
+                });
+        }
+    };
+
+    const handleKeyboardDelay = (key) => {
+        if (key === "<") {
+            if (String((singleModeStatus['Single_Infra_Delay'])).length === 1) {
+                dispatch(updateSingleModeInfdly({ single_infra_delay: 0 }));
+            }
+            else {
+                dispatch(updateSingleModeInfdly({ single_infra_delay: String((singleModeStatus['Single_Infra_Delay'])).slice(0, -1) }));
+            }
+        }
+        else if (key === "CLEAR") {
+            dispatch(updateSingleModeInfdly({ single_infra_delay: 0 }));
+        }
+        else {
+            if (String((singleModeStatus['Single_Infra_Delay'])) === "0") {
+                dispatch(updateSingleModeInfdly({ single_infra_delay: key }));
+            }
+            else {
+                dispatch(updateSingleModeInfdly({ single_infra_delay: singleModeStatus['Single_Infra_Delay'] + key }));
+            }
+        }
+    }
+
+
 
     return (
         <Paper elevation={8}
             square={false}
             sx={{
-                background: "lightblue",
+                background: grey[200],
                 width: 400,
                 height: 100,
                 marginLeft: 1,
@@ -77,15 +135,21 @@ const Infra = () => {
             }}>
                 <strong>Infra</strong>
             </Typography>
-            <Box noValidate component="form" autoComplete="off" sx={{ backgroundColor: "", width: 400, height: 50, display: 'flex', justifyContent: 'center', gap: 3, alignItems: "center" }}>
-                <TextField
-                    disabled={isProcessStarted}
-                    value={singleModeStatus['Single_Infra_Delay']}
-                    onChange={handleInfraDelayChange}
-                    InputProps={{
-                        startAdornment: <InputAdornment position="start">DLY</InputAdornment>,
-                    }} size="small" sx={{ width: 140, alignSelf: 'strech', }}>
-                </TextField>
+            <Box noValidate component="form" autoComplete="off" sx={{ backgroundColor: "", width: 400, height: 50, display: 'flex', justifyContent: 'center', alignItems: "center" }}>
+                <KeyboardTextField
+                    disabledBool={isProcessStarted}
+                    valueProp={singleModeStatus['Single_Infra_Delay']}
+                    //onChange={handleInfraDelayChange}
+                    inputadornment={"DLY"}
+                    handleChange={handleKeyboardDelay}
+                    left="35%"
+                    top="40%"
+                    sx={{
+                        width: 120,
+                        mr: 7
+                    }}
+                >
+                </KeyboardTextField>
                 <Box flexDirection={'column'}>
                     <Typography gutterBottom>
                         Percentage: {singleModeStatus['Single_Infra_Percentage']}
@@ -102,7 +166,10 @@ const Infra = () => {
                         marks
                         min={0}
                         max={100}
-                        sx={{ width: 200 }}
+                        sx={{
+                            width: 200,
+                            color: red[900]
+                        }}
                     />
                 </Box>
             </Box>

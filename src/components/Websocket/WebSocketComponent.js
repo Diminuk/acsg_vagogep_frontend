@@ -6,8 +6,32 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Box, Paper } from '@mui/material';
 import { Typography } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
+import useWebSocket from 'react-use-websocket';
 
 const WebSocketComponent = () => {
+    const [messages, setMessages] = useState([]);
+
+    const dispatch = useDispatch();
+
+    const { sendMessage, lastMessage, readyState } = useWebSocket('ws://localhost:8000/ws', {
+        onOpen: () => console.log('WebSocket connection established.'),
+        onClose: () => console.log('WebSocket connection closed.'),
+        onMessage: (message) => {
+            setMessages((prev) => [...prev, "Data"]);
+            console.log(message)
+            const data = JSON.parse(message.data);
+            dispatch(updateStatusFromWebsocket(data));
+        },
+    });
+
+    return (
+        <>
+        </>
+
+    );
+};
+
+/*const WebSocketComponent = () => {
     const [isConnected, setIsConnected] = useState(false);
     const dispatch = useDispatch();
 
@@ -21,6 +45,7 @@ const WebSocketComponent = () => {
             };
 
             socket.onmessage = (event) => {
+                console.log("--------GOT WEBSEOCKET NOTIFICATION--------")
                 const data = JSON.parse(event.data);
                 dispatch(updateStatusFromWebsocket(data));
             };
@@ -38,7 +63,7 @@ const WebSocketComponent = () => {
         };
 
         connectWebSocket();
-    }, [dispatch]);
+    }, []);
 
     if (!isConnected) {
         return (
@@ -59,5 +84,5 @@ const WebSocketComponent = () => {
 
     return null;
 };
-
+*/
 export default WebSocketComponent;

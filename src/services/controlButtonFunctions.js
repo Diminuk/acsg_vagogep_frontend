@@ -9,12 +9,14 @@ import { useSelector } from 'react-redux';
 
 export const useControlButtonFunctions = () => {
     const dispatch = useDispatch();
-    const IsProcessPaused = useSelector(state => state.statusled.processStatus['IsProcessPaused']);
+    const IsProcessPaused = useSelector(state => state.statusled.processStatus['isProcessPaused']);
     const isProcessStarted = useSelector(state => state.statusled.processStatus['IsProcessStarted']);
+    const singleModeStatus = useSelector(state => state.statusled.singleModeStatus)
 
     const handleStart = async () => {
         try {
             if (isProcessStarted) {
+                // POST updated data if already running
                 fetch('http://localhost:8000/api/update/single', {
                     method: 'POST',
                     headers: {
@@ -38,18 +40,77 @@ export const useControlButtonFunctions = () => {
                     });
             }
             else {
+                // post  single parameters
+                fetch('http://localhost:8000/api/update/single', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(singleModeStatus)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle successful response
+                        console.log('Value posted successfully:');
+                    })
+                    .catch(error => {
+                        // Handle error
+                        console.error('Error posting value:', error);
+                    });
+
+                // post current array
+                /*fetch('http://localhost:8000/api/update/single', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(singleModeStatus)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle successful response
+                        console.log('Value posted successfully:');
+                    })
+                    .catch(error => {
+                        // Handle error
+                        console.error('Error posting value:', error);
+                    });*/
+
+                // start process
                 const response = await fetch('http://localhost:8000/api/start_process', {
                     method: 'GET',
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to start process');
-                }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle successful response
+                        console.log('Value posted successfully:');
+                    })
+                    .catch(error => {
+                        // Handle error
+                        console.error('Error:', error);
+                    });
+
             }
             // Dispatch action for success
             //dispatch(startProcessSuccess());
         } catch (error) {
-            // Dispatch action for failure with error message
-            //dispatch(startProcessFailure(error.message));
+            console.log("Error: ")
+            console.log(error)
         }
     };
 

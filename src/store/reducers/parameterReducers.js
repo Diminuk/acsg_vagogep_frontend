@@ -79,14 +79,6 @@ const parameterReducer = (state = initialState, action) => {
                     [number]: value
                 }
             };
-        case UPDATE_DECELERATION:
-            return {
-                ...state,
-                Deceleration: {
-                    ...state.Deceleration,
-                    [number]: value
-                }
-            };
         default:
             return state;
     }

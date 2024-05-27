@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -7,61 +7,63 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-
-
+import { logout } from '../../store/actions/authActions';
+import { grey, red } from '@mui/material/colors';
+import IconWithSvg from '../../static/AcsgLogoComponent';
+import AcsgLogo from '../../static/AcsgLogoComponent';
 function NavBar() {
-    //const isAdmin = useSelector(state => state.isAdmin);
-    const isAdmin = true;
+    const isAdmin = useSelector(state => state.auth.isAdmin);
+
+    const dispatch = useDispatch();
+
     const history = useNavigate();
 
     const handleNavigate = (route) => {
         history(route);
     };
 
+    const handleLogout = () => {
+        dispatch(logout);
+        handleNavigate("/login");
+    }
+
 
     return (
-        <AppBar position="static">
+        <AppBar
+            sx={{
+
+                bgcolor: grey[800]
+            }} position="static">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: 'inherit',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        ACSG Kft.
-                    </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                    <AcsgLogo></AcsgLogo>
+                    <Box sx={{ ml: 3, flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         <Button
-                            onClick={() => handleNavigate('/control')}
+                            onClick={() => handleNavigate('/user_control')}
                             sx={{ my: 2, color: 'white', display: 'block' }}
                         >
-                            PROCESS
-                        </Button>
-                        {isAdmin && (
-                            <Button
-                                onClick={() => handleNavigate('/change_parameters')}
-                                sx={{ my: 2, color: 'white', display: 'block' }}
-                            >
-                                CHANGE PARAMETERS
-                            </Button>
-                        )}
-                        <Button
-                            onClick={() => handleNavigate('/log')}
-                            sx={{ my: 2, color: 'white', display: 'block' }}
-                        >
-                            HISTORY
+                            OPERATOR PROCESS
                         </Button>
                         {isAdmin && (
                             <>
+                                <Button
+                                    onClick={() => handleNavigate('/control')}
+                                    sx={{ my: 2, color: 'white', display: 'block' }}
+                                >
+                                    ADVANCED PROCESS
+                                </Button>
+                                <Button
+                                    onClick={() => handleNavigate('/change_parameters')}
+                                    sx={{ my: 2, color: 'white', display: 'block' }}
+                                >
+                                    CHANGE PARAMETERS
+                                </Button>
+                                <Button
+                                    onClick={() => handleNavigate('/log')}
+                                    sx={{ my: 2, color: 'white', display: 'block' }}
+                                >
+                                    HISTORY
+                                </Button>
                                 <Button
                                     onClick={() => handleNavigate('/users')}
                                     sx={{ my: 2, color: 'white', display: 'block' }}
@@ -79,7 +81,7 @@ function NavBar() {
                     </Box>
                     <Box>
                         <Button
-                            onClick={() => handleNavigate('/login')}
+                            onClick={handleLogout}
                             sx={{ my: 2, color: 'white', display: 'block' }}
                         >
                             LOGOUT

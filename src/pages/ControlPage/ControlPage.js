@@ -14,7 +14,6 @@ import Servo from '../../components/ControlPage/Motor';
 import ArrayProcess from '../../components/ControlPage/ArrayProcess';
 import BatchPopup from '../../components/ControlPage/Popups/BatchPopup';
 import ManualJumpPopup from '../../components/ControlPage/Popups/ManualJumpPopup';
-
 const ControlPage = () => {
 
     const mode = useSelector(state => state.statusled.processStatus['Mode']);
