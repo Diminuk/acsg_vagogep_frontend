@@ -22,6 +22,10 @@ const WebSocketComponent = () => {
             const data = JSON.parse(message.data);
             dispatch(updateStatusFromWebsocket(data));
         },
+        shouldReconnect: (closeEvent) => {
+            console.log('WebSocket connection closed. Attempting to reconnect...', closeEvent);
+            return true; // This will trigger the reconnection
+        },
     });
 
     return (
